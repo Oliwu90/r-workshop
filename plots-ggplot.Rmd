@@ -8,3 +8,34 @@ output: html_document
 ### Plots with ggplot2
 
 We are going to make plots in R and it's going to be amazing.
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+
+### 1st file
+ca_np <- read_csv(here("data", "ca_np.csv"))
+names(ca_np)
+head(ca_np)
+summary(ca_np)
+
+### 2nd sfile
+ci_np <- read_excel(here("data","ci_np.xlsx"))
+names(ci_np)
+head(ci_np)
+summary(ci_np)
+
+### ggplot bare-bones template
+# ggplot(data = df_name, aes(x = x_var_name, y =y_var_name)) + 
+#   geom_type()
+
+### base as bare-bones
+### then add another layer with + sign
+### customized with color, size, alpha, fill, ... etc that are fixed
+### or depending on variables which placed customization into aes()
+
+gg_base <- ggplot(data = ci_np, aes(x = year, y = visitors))
+gg_base +
+  geom_col(aes(fill = visitors))
+```
