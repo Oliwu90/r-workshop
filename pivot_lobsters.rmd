@@ -1,0 +1,73 @@
+---
+title: "pivot_lobsters"
+author: "Oliver"
+date: "7/7/2020"
+output: html_document
+---
+```{r}
+### attach libraries
+library(tidyverse)
+library(readxl)
+library(here)
+library(skimr) # install.packages('skimr')
+library(kableExtra) # install.packages('kableExtra')
+
+### read in data, and skip 4 rows
+lobsters <- read_xlsx(here("data/lobsters.xlsx"), skip = 4 )
+
+### summary gives you only for numeric, not helpful when i have character so we use skim
+skim(lobsters)
+
+### %>% means to chain steps together
+### function n() means count the number of times an observation shows up
+### count the lobsters by year =, so we group by year and count 
+lobsters %>%
+  group_by(year) %>%
+  summarise(count_by_year = n())
+
+### single summary by 1*1
+lobsters %>%
+  summarise(count = n())
+  
+lobsters %>% 
+  group_by(year)
+
+### 6.4.2 group_by multiple variables
+lobsters %>% 
+  group_by(site, year) %>% 
+  summarise(county_by_siteyear = n())
+
+### 6.4.3 summarize multiple variables
+###### na.rm=TRUE means drop NA, so it can calculate without showing NA
+siteyear_summary <- lobsters %>% 
+  group_by(site, year) %>% 
+  summarise(county_by_siteyear = n(),
+            mean_size_mm = mean(size_mm, na.rm=TRUE),
+            sd_size_mm = sd(size_mm, na.rm=TRUE)
+            )
+### 6.4.4 Table formatting with kable()
+siteyear_summary %>%
+  kable()
+
+
+siteyear_summary <- lobsters %>% 
+  group_by(site, year) %>% 
+  summarise(county_by_siteyear = n(),
+            mean_size_mm = mean(size_mm, na.rm=TRUE),
+            sd_size_mm = sd(size_mm, na.rm=TRUE),
+            median_size_mm = median(size_mm, na.rm = TRUE)
+            )
+
+ggplot(data = siteyear_summary, aes(x = year, y = county_by_siteyear, color = site)) + 
+  geom_line()
+
+ggsave(here("figures", "lobsters-line.png"))
+
+ggplot(siteyear_summary, aes(x= year, y = median_size_mm)) + 
+  geom_col() + 
+  facet_wrap(~site)
+
+ggsave(here("figures", "lobsters-col.png"))
+```      
+### use backtick r ... backtick makes R code in-line in RMarkdown
+There are `r nrow(lobsters)` total lobsters included in this report.
