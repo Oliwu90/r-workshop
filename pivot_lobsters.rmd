@@ -91,6 +91,17 @@ ggsave(here("figures", "lobsters-line.png"))
 ggplot(siteyear_summary, aes(x = year, y = median_size_mm)) +
   geom_col() +
   facet_wrap(~site)
+
+ggsave(here("figures", "lobsters-col.png"))
+
+lobsters %>%
+  count(site, year)
+
+lobsters %>%
+  group_by(site, year) %>% 
+  summarize(n = n()) %>%
+  ungroup()
 ```      
 ### use backtick r ... backtick makes R code in-line in RMarkdown
 There are `r nrow(lobsters)` total lobsters included in this report.
+There are `r count(lobsters)` total lobsters included in this summary.
